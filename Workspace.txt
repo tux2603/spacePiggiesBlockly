@@ -1,0 +1,44 @@
+<xml xmlns="http://www.w3.org/1999/xhtml" id="workspaceBlocks" style="display:none">
+  <variables></variables>
+  
+
+<block type="user-update" x="163" y="38">
+<statement name="DO">
+	<block type="controls_if">
+        	<value name="IF0">
+			<block type="is_a_key_down"></block>
+		</value>
+		<value name="DO0">
+			<block type="turn">
+				<field name="DIRECTION>l</field>
+			</block>
+		</value>
+	</block>
+        <next>
+          <block type="controls_if">
+            <value name="IF0">
+            </value>
+            <next>
+              <block type="controls_if" id="NfUv[K$GH9i;K+N5Vu:U">
+                <value name="IF0">
+                  <block type="logic_boolean" id="jZGNB_.RlPCtj_3y.By$"></block
+
+                </value>
+		<value name="Do
+                <next>
+                  <block type="controls_if" id="dJrs(%M:TA%V3y)C(AW(">
+                    <value name="IF0">
+                      <block type="logic_boolean" id="ol{Y?]=J~o)/+1p?DsVm">
+                        <field name="BOOL">TRUE</field>
+                      </block>
+                    </value>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+  </block>
+</xml>

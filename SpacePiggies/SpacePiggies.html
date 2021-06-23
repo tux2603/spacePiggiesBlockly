@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title>Space Piggies</title>
+	
+	
+	<script src="../blockly/blockly_compressed.js"></script>
+	<script src="../blockly/blocks_compressed.js"></script> 
+	<script src="../blockly/javascript_compressed.js"></script>
+	<script src="../blockly/msg/js/en.js"></script>
+
+	<script src="../blockly/blocks/spacepiggieblocks.js"></script>
+	<script src="../blockly/blocks/keys.js"></script>
+	<script src="../blockly/blocks/mouse.js"></script>
+	
+	<script src="Sprite.js"></script>
+	<script src="shipParams.js"></script>
+	<script src="eggs.js"></script>
+	<script src="ai.js"></script>
+	<script src="spacePiggies.js"></script>
+
+	<style>
+body {
+	padding: 0;
+	margin: 0;
+}
+
+#canvas {
+	padding: 0;
+	margin: 0;
+	position: fixed;
+	//height:100%;
+	//width:100%;
+	z-index:0
+}
+
+#userArea {
+	position: fixed;
+	height: 600px;
+	width: 600px;
+	display: block;
+}
+
+#userText {
+	width: 100%;
+	height: 100%;
+}
+
+#output {
+	position: fixed;
+	right: 5px;
+	width: 250px;		
+	z-index: 1000;
+	list-style: none;
+	padding-left: 5px;
+}
+
+.outputItem {
+	color: rgba(255, 255, 255, 0.9);
+	background-color: rgba(0, 0, 0, 0.75);
+	margin-bottom: 5px;
+	font-family: sans;	
+}
+
+.inline {
+	padding-right: 5px;
+	padding-left: 5px;
+	display: inline;
+}
+
+	</style>
+
+</head>
+
+<body onload="load()">
+
+	<!--[if IE]>
+		<p>Space piggies does not currently work with Internet Explorer. I am working to remedy this problem.</p>
+	<![endif]-->
+	
+	<div id="status">
+		<p class="inline">Space Piggies</p>
+		<button onclick="toggleWorkspace()" class="inline" id="toggleWorkspace">Show workspace</button>
+		<button onclick="addScript()" class="inline">Use these blocks in the game</button>
+		<button onclick="saveWorkspace()" class="inline">Download workspace</button>
+		<p id="pigsCaught" class="inline"></p>
+		<a id="downloadLink" hidden="">Hidden Link to download workspace</a>
+	</div>
+
+	<canvas id="canvas"></canvas>	
+
+	<div id="userArea" style="width:1000px; height:600px"></div>
+		
+	<ul id="output">
+	</ul>
+
+	<xml id="toolbox" style="display: none">
+		<category name="Logic" colour="210">
+			<category name="If" colour="210">
+				<block type="controls_if"></block>
+				<block type="controls_if">
+					<mutation else="1"></mutation>
+				</block>
+				<block type="controls_if">
+					<mutation elseif="1" else="1"></mutation>
+				</block>
+			</category>
+			<category name="Boolean" colour="210">
+				<block type="logic_compare"></block>
+				<block type="logic_operation"></block>
+				<block type="logic_negate"></block>
+				<block type="logic_boolean"></block>
+				<block type="logic_null"></block>
+				<block type="logic_ternary"></block>
+			</category>
+		</category>
+		<category name="Loops" colour="120">
+			<block type="user_update"></block>
+			<block type="controls_repeat_ext">
+				<value name="TIMES">
+					<shadow type="math_number">
+						<field name="NUM">10</field>
+					</shadow>
+				</value>
+			</block>
+			<block type="controls_whileUntil"></block>
+			<block type="controls_for">
+				<field name="VAR">i</field>
+				<value name="FROM">
+					<shadow type="math_number">
+						<field name="NUM">1</field>
+					</shadow>
+				</value>
+				<value name="TO">
+					<shadow type="math_number">
+						<field name="NUM">10</field>
+					</shadow>
+				</value>
+				<value name="BY">
+					<shadow type="math_number">
+						<field name="NUM">1</field>
+					</shadow>
+				</value>
+			</block>
+			<block type="controls_forEach"></block>
+			<block type="controls_flow_statements"></block>
+		</category>
+		<category name="Math" colour="230">
+			<block type="math_number"></block>
+			<block type="math_arithmetic"></block>
+			<block type="math_single"></block>
+			<block type="math_trig"></block>
+			<block type="math_constant"></block>
+			<block type="math_number_property"></block>
+			<block type="math_round"></block>
+			<block type="math_on_list"></block>
+			<block type="math_modulo"></block>
+			<block type="math_constrain">
+				<value name="LOW">
+					<shadow type="math_number">
+						<field name="NUM">1</field>
+					</shadow>
+				</value>
+				<value name="HIGH">
+					<shadow type="math_number">
+						<field name="NUM">100</field>
+					</shadow>
+				</value>
+			</block>
+			<block type="math_random_int">
+				<value name="FROM">
+					<shadow type="math_number">
+						<field name="NUM">1</field>
+					</shadow>
+				</value>
+				<value name="TO">
+					<shadow type="math_number">
+						<field name="NUM">100</field>
+					</shadow>
+				</value>
+			</block>
+			<block type="math_random_float"></block>
+		</category>
+		<category name="Lists" colour="260">
+			<block type="lists_create_empty"></block>
+			<block type="lists_create_with"></block>
+			<block type="lists_repeat">
+				<value name="NUM">
+					<shadow type="math_number">
+						<field name="NUM">5</field>
+					</shadow>
+				</value>
+			</block>
+			<block type="lists_length"></block>
+			<block type="lists_isEmpty"></block>
+			<block type="lists_indexOf"></block>
+			<block type="lists_getIndex"></block>
+			<block type="lists_setIndex"></block>
+		</category>
+		
+		<category name="Output" colour="160">
+			<block type="log_output"></block>
+			<block type="text"></block>
+			<block type="text_join"></block>
+		</category>
+		
+		<category name="Color" colour="20">
+			<block type="set_ship_color"></block>
+			<block type="colour_picker"></block>
+			<block type="colour_random"></block>
+
+			
+			
+			<block type="colour_rgb">
+				<value name="RED">
+					<shadow type="math_number">
+						<field name="NUM">100</field>
+					</shadow>
+				</value>
+				<value name="GREEN">
+					<shadow type="math_number">
+						<field name="NUM">50</field>
+					</shadow>
+				</value>
+				<value name="BLUE">
+					<shadow type="math_number">
+						<field name="NUM">0</field>
+					</shadow>
+				</value>
+			</block>
+			
+			<block type="colour_blend">
+				<value name="COLOUR1">
+					<shadow type="colour_picker">
+						<field name="COLOUR">#ff0000</field>
+				</shadow>
+				</value>
+				<value name="COLOUR2">
+					<shadow type="colour_picker">
+						<field name="COLOUR">#3333ff</field>
+					</shadow>
+				</value>
+				<value name="RATIO">
+					<shadow type="math_number">
+						<field name="NUM">0.5</field>
+					</shadow>
+				</value>
+			</block>
+			</category>
+		
+		<category name="Variables" custom="VARIABLE" colour="330"></category>
+		<category name="Functions" custom="PROCEDURE" colour="290"></category>
+		<sep></sep>
+		
+		<category name="Space Ship control" colour="150">
+			<category name="Basic" colour="150">
+				<block type="move"></block>
+				<block type="turn"></block>
+				<block type="stop"></block>
+			</category>
+
+			<category name="Advanced" colour="150">
+				<block type="turn_rate">
+					<value name="SPEED">
+						<shadow type="math_number"><field name="NUM">100</field></shadow>
+					</value>
+				</block>
+
+				<block type="set_speed_percent">
+					<value name="SPEED">
+						<shadow type="math_number"><field name="NUM">100</field></shadow>
+					</value>
+				</block>
+
+				<block type="set_speed_absolute">
+					<value name="SPEED">
+						<shadow type="math_number"><field name="NUM">100</field></shadow>
+					</value>
+				</block>
+
+				<block type="accel">
+					<value name="SPEED">
+						<shadow type="math_number"><field name="NUM">100</field></shadow>
+					</value>
+				</block>
+
+				<block type="get_ship_direction"></block>
+			</category>
+
+		</category>
+		
+		<category name="Space Ship Blasters" colour="0">
+			<block type="fire_forward_blaster"></block>
+			<block type="fire_sternchaser"></block>
+			<block type="fire_port_broadside"></block>
+			<block type="fire_starboard_broadside"></block>
+		</category>
+
+		<category name="Detection of other sprites...">
+			<block type="nearest_pig"></block>
+			<block type="pig_number"></block>
+			<block type="nearest_ai"></block>
+			<block type="ai_number"></block>
+			<block type="direction_to"></block>
+			<block type="distance_to"></block>
+		</category>
+
+		<category name="Mouse" colour="195">
+			<block type="is_left_mouse_pressed"></block>
+			<block type="is_right_mouse_pressed"></block>
+			<block type="is_center_mouse_pressed"></block>
+
+			<block type="mouse_x"></block>	
+			<block type="mouse_y"></block>	
+			<block type="mouse_wheel""></block>	
+
+			<block type="direction_to_mouse"></block>
+		</category>
+
+		<category name="Keyboard" colour="195">
+			<category name="Number Keys" colour="195">
+				<block type="is_0_key_pressed"></block>
+				<block type="is_1_key_pressed"></block>
+				<block type="is_2_key_pressed"></block>
+				<block type="is_3_key_pressed"></block>
+				<block type="is_4_key_pressed"></block>
+				<block type="is_5_key_pressed"></block>
+				<block type="is_6_key_pressed"></block>
+				<block type="is_7_key_pressed"></block>
+				<block type="is_8_key_pressed"></block>
+				<block type="is_9_key_pressed"></block>
+				<block type="is_0_key_pressed"></block>
+			</category>
+			
+			<category name="Letter Keys" colour="195">
+				<block type="is_a_key_pressed"></block>
+				<block type="is_b_key_pressed"></block>
+				<block type="is_c_key_pressed"></block>
+				<block type="is_d_key_pressed"></block>
+				<block type="is_e_key_pressed"></block>
+				<block type="is_f_key_pressed"></block>
+				<block type="is_g_key_pressed"></block>
+				<block type="is_h_key_pressed"></block>
+				<block type="is_i_key_pressed"></block>
+				<block type="is_j_key_pressed"></block>
+				<block type="is_k_key_pressed"></block>
+				<block type="is_l_key_pressed"></block>
+				<block type="is_m_key_pressed"></block>
+				<block type="is_n_key_pressed"></block>
+				<block type="is_o_key_pressed"></block>
+				<block type="is_p_key_pressed"></block>
+				<block type="is_q_key_pressed"></block>
+				<block type="is_r_key_pressed"></block>
+				<block type="is_s_key_pressed"></block>
+				<block type="is_t_key_pressed"></block>
+				<block type="is_u_key_pressed"></block>
+				<block type="is_v_key_pressed"></block>
+				<block type="is_w_key_pressed"></block>
+				<block type="is_x_key_pressed"></block>
+				<block type="is_y_key_pressed"></block>
+				<block type="is_z_key_pressed"></block>
+			</category>
+			
+			<category name="Other Keys" colour="195">
+				<block type="is_Space_key_pressed"></block>
+				<block type="is_Left_Arrow_key_pressed"></block>
+				<block type="is_Up_Arrow_key_pressed"></block>
+				<block type="is_Right_Arrow_key_pressed"></block>
+				<block type="is_Down_Arrow_key_pressed"></block>
+				<block type="is_Equal_key_pressed"></block>
+				<block type="is_Dash_key_pressed"></block>
+				<block type="is_Open_Bracket_key_pressed"></block>
+				<block type="is_Close_Bracket_key_pressed"></block>
+				<block type="is_Semicolon_key_pressed"></block>
+				<block type="is_Quote_key_pressed"></block>
+				<block type="is_Comma_key_pressed"></block>
+				<block type="is_Period_key_pressed"></block>
+				<block type="is_Forward_Slash_key_pressed"></block>
+			</category>
+		</category>
+
+		<category name="Examples" colour="null">
+			<category name="Basic Movement" colour="null">
+				<block type="user_update">
+					<statement name="DO">
+						<block type="controls_if">
+										<value name="IF0">	<block type="is_w_key_pressed"></block>	</value>
+							<value name="DO0">	<block type="move"><field name="DIRECTION">f</field></block>	</value>
+
+							<next><block type="controls_if">
+											<value name="IF0">	<block type="is_a_key_pressed"></block>	</value>
+								<value name="DO0">	<block type="turn"><field name="DIRECTION">l</field></block>	</value>
+
+								<next><block type="controls_if">
+									<value name="IF0">	<block type="is_d_key_pressed"></block>	</value>
+									<value name="DO0">	<block type="turn"><field name="DIRECTION">r</field></block>	</value>
+								</block></next>
+							</block></next>
+						</block>
+					</statement>
+				</block>
+			</category>
+			
+			<category name="Mouse control" colour="null">
+				<block type="user_update" x="25" y="44">
+					<statement name="DO">
+						<block type="controls_if">
+						<value name="IF0">
+							<block type="logic_compare">
+								<field name="OP">GT</field>
+								<value name="A">
+									<block type="direction_to_mouse"></block>
+								</value>
+								<value name="B">
+									<block type="math_number">
+										<field name="NUM">0</field>
+									</block>
+								</value>
+							</block>
+						</value>
+						<statement name="DO0">
+							<block type="turn">
+								<field name="DIRECTION">r</field>
+							</block>
+						</statement>
+						<next>
+							<block type="controls_if">
+								<value name="IF0">
+									<block type="logic_compare">
+										<field name="OP">LT</field>
+										<value name="A">
+											<block type="direction_to_mouse"></block>
+										</value>
+										<value name="B">
+											<block type="math_number">
+												<field name="NUM">0</field>
+											</block>
+										</value>
+									</block>
+								</value>
+								<statement name="DO0">
+									<block type="turn">
+										<field name="DIRECTION">l</field>
+									</block>
+								</statement>
+								<next>
+									<block type="controls_if">
+										<value name="IF0">
+											<block type="is_left_mouse_pressed"></block>
+										</value>
+										<statement name="DO0">
+											<block type="move">
+												<field name="DIRECTION">f</field>
+											</block>
+										</statement>
+									</block>
+								</next>
+							</block>
+						</next>
+						</block>
+					</statement>
+				</block>
+			</category>
+
+			<category name="Chase pigs">
+				<block type="user_update" x="23" y="114">
+		<field name="SHIP_TYPE">FAST</field>
+		<statement name="DO">
+			<block type="controls_if">
+				<mutation else="1"></mutation>
+				<value name="IF0">
+					<block type="is_Space_key_pressed"></block>
+				</value>
+				<statement name="DO0">
+					<block type="set_speed_percent">
+						<value name="SPEED">
+							<shadow type="math_number">
+								<field name="NUM">100</field>
+							</shadow>
+						</value>
+						<next>
+							<block type="controls_if">
+								<mutation elseif="1"></mutation>
+								<value name="IF0">
+									<block type="logic_compare">
+										<field name="OP">GT</field>
+										<value name="A">
+											<block type="direction_to">
+												<value name="SPRITE">
+													<block type="nearest_pig"></block>
+												</value>
+											</block>
+										</value>
+										<value name="B">
+											<block type="math_number">
+												<field name="NUM">0</field>
+											</block>
+										</value>
+									</block>
+								</value>
+								<statement name="DO0">
+									<block type="turn">
+										<field name="DIRECTION">r</field>
+									</block>
+								</statement>
+								<value name="IF1">
+									<block type="logic_compare">
+										<field name="OP">LT</field>
+										<value name="A">
+											<block type="direction_to">
+												<value name="SPRITE">
+													<block type="nearest_pig"></block>
+												</value>
+											</block>
+										</value>
+										<value name="B">
+											<block type="math_number">
+												<field name="NUM">0</field>
+											</block>
+										</value>
+									</block>
+								</value>
+								<statement name="DO1">
+									<block type="turn">
+										<field name="DIRECTION">l</field>
+									</block>
+								</statement>
+							</block>
+						</next>
+					</block>
+				</statement>
+				<statement name="ELSE">
+					<block type="stop"></block>
+				</statement>
+				<next>
+					<block type="controls_if">
+						<value name="IF0">
+							<block type="is_w_key_pressed"></block>
+						</value>
+						<statement name="DO0">
+							<block type="move">
+								<field name="DIRECTION">f</field>
+							</block>
+						</statement>
+						<next>
+							<block type="controls_if">
+								<value name="IF0">
+									<block type="is_a_key_pressed"></block>
+								</value>
+								<statement name="DO0">
+									<block type="turn">
+										<field name="DIRECTION">l</field>
+									</block>
+								</statement>
+								<next>
+									<block type="controls_if">
+										<value name="IF0">
+											<block type="is_d_key_pressed"></block>
+										</value>
+										<statement name="DO0">
+											<block type="turn">
+												<field name="DIRECTION">r</field>
+											</block>
+										</statement>
+									</block>
+								</next>
+							</block>
+						</next>
+					</block>
+				</next>
+			</block>
+		</statement>
+	</block>
+</category>
+			
+		</category>
+	</xml>
+
+	
+	
+</body>
