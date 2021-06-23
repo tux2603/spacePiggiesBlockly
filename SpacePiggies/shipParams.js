@@ -17,7 +17,7 @@ var shipParams = {
 		maxHealth: 150,
 
 		_texture: undefined,
-		_textureURL: "Images/tinyShip.png",
+		_textureURL: "https://raw.githubusercontent.com/tux2603/spacePiggiesBlockly/main/SpacePiggies/Images/tinyShip.png",
 		
 		getTexture: function(sb) {
 			if(this._texture === undefined && sb !== undefined) {
@@ -53,7 +53,7 @@ var shipParams = {
 		maxHealth: 750,
 		
 		_texture: undefined,
-		_textureURL: "Images/defaultShip.png",
+		_textureURL: "https://raw.githubusercontent.com/tux2603/spacePiggiesBlockly/main/SpacePiggies/Images/defaultShip.png",
 		
 		getTexture: function(sb) {
 			if(this._texture === undefined && sb !== undefined) {
@@ -100,7 +100,7 @@ var shipParams = {
 		maxHealth: 600,
 		
 		_texture: null,
-		_textureURL: "Images/ship1.png",
+		_textureURL: "https://raw.githubusercontent.com/tux2603/spacePiggiesBlockly/main/SpacePiggies/Images/ship1.png",
 		
 		getTexture: function(sb) {
 			if(this._texture === null && sb !== undefined) {

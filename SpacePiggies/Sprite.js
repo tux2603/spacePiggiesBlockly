@@ -933,11 +933,13 @@ var SpriteBatch = {
 	//If the texture will not be used for pixel perfect collision detection, set generatePixelArray to false;
 	//This will save both time and memory
 	loadTexture: function(src, generatePixelArray=true) {
+		generatePixelArray = false;
+		
 		if(typeof this.gl !== 'undefined')
 		{
 			var texture = this.gl.createTexture();
 			texture.image = new Image();
-			texture.image.crossOrigin = null;
+			texture.image.crossOrigin = "Anonymous";
 
 			if(generatePixelArray) {
 				texture.image.onload = function () {

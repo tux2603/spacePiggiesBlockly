@@ -258,15 +258,15 @@ function load() {
 		shipParams[i].getTexture(spriteBatch);
 	}
 	
-	asteroidTexture = spriteBatch.loadTexture("Images/asteroid_big1.png");
-	pixel = spriteBatch.loadTexture("Images/Pixel.png");
-	laserTexture = spriteBatch.loadTexture("Images/laser.png");
-	var backgroundTexture = spriteBatch.loadTexture("Images/stars2.png", false);
+	asteroidTexture = spriteBatch.loadTexture("https://raw.githubusercontent.com/tux2603/spacePiggiesBlockly/main/SpacePiggies/Images/asteroid_big1.png");
+	pixel = spriteBatch.loadTexture("https://raw.githubusercontent.com/tux2603/spacePiggiesBlockly/main/SpacePiggies/Images/Pixel.png");
+	laserTexture = spriteBatch.loadTexture("https://raw.githubusercontent.com/tux2603/spacePiggiesBlockly/main/SpacePiggies/Images/laser.png");
+	var backgroundTexture = spriteBatch.loadTexture("https://raw.githubusercontent.com/tux2603/spacePiggiesBlockly/main/SpacePiggies/Images/stars2.png", false);
 	
-	rainbowPiggyTexture = spriteBatch.loadTexture("Images/RainbowPiggy.png");
+	rainbowPiggyTexture = spriteBatch.loadTexture("https://raw.githubusercontent.com/tux2603/spacePiggiesBlockly/main/SpacePiggies/Images/RainbowPiggy.png");
 	rainbowPiggyTexture.numFrames = 4;
 	
-	piggyTexture = spriteBatch.loadTexture("Images/Piggy.png");
+	piggyTexture = spriteBatch.loadTexture("https://raw.githubusercontent.com/tux2603/spacePiggiesBlockly/main/SpacePiggies/Images/Piggy.png");
 	piggyTexture.numFrames = 4;
 
 	
